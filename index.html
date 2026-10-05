@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <title>Dharmic Text Reader &amp; Viewer</title>
+    <meta name="theme-color" content="#9a3412">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Dharmic Reader">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+
     <!-- Google Fonts: Devanagari + Latin Serif -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,7 +147,7 @@
             color: var(--primary-accent);
             letter-spacing: 1px;
             margin: 0 0 6px 0;
-            font-size: var(--fs-xl);
+            font-size: var(--fs-lg);
         }
 
         .subheading {
@@ -216,6 +224,13 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+        }
+
+        .btn-sm {
+            padding: 3px 8px;
+            font-size: var(--fs-xs);
+            font-weight: 500;
+            border-radius: 4px;
         }
 
         .btn:hover {
@@ -467,16 +482,16 @@
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 24px;
-            padding: 16px;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 10px 14px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 8px;
         }
 
         .pagination-info {
-            font-size: var(--fs-md);
+            font-size: var(--fs-sm);
             color: var(--meta-text);
             font-family: sans-serif;
         }
@@ -484,19 +499,325 @@
         .pagination-jump {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         input[type="number"] {
-            width: 90px;
-            padding: 8px 10px;
+            width: 60px;
+            padding: 6px 8px;
             border: 1px solid var(--input-border);
             border-radius: 6px;
-            font-size: var(--fs-md);
+            font-size: var(--fs-sm);
             font-family: inherit;
             background: var(--input-bg);
             color: var(--input-text);
         }
+    
+
+        /* ---------------------------------------------------------------
+         * Dharmic Reader v3 layout
+         * --------------------------------------------------------------- */
+        body {
+            padding: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 50% -10%, rgba(251,146,60,.10), transparent 38%),
+                var(--bg-color);
+        }
+
+        .container {
+            max-width: 1180px;
+            padding: 0 18px 40px;
+        }
+
+        .welcome-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 50% 18%, rgba(249,115,22,.20), transparent 28%),
+                radial-gradient(circle at 8% 88%, rgba(120,53,15,.08), transparent 26%),
+                radial-gradient(circle at 92% 82%, rgba(120,53,15,.08), transparent 26%),
+                linear-gradient(180deg, #fffaf3 0%, var(--soft-bg) 55%, #f4eadc 100%);
+        }
+
+        .welcome-screen::before, .welcome-screen::after {
+            content: '';
+            position: absolute;
+            border: 1px solid rgba(154,52,18,.13);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .welcome-screen::before { width: 620px; height: 620px; top: -390px; left: 50%; transform: translateX(-50%); }
+        .welcome-screen::after { width: 760px; height: 760px; bottom: -610px; left: 50%; transform: translateX(-50%); }
+
+        .welcome-card {
+            width: min(820px, 100%);
+            min-height: min(720px, calc(100vh - 48px));
+            box-sizing: border-box;
+            text-align: center;
+            padding: clamp(26px, 5vw, 54px) clamp(22px, 6vw, 68px) 38px;
+            border: 1px solid rgba(154,52,18,.28);
+            border-radius: 30px;
+            background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,250,243,.94));
+            box-shadow: 0 30px 90px rgba(92,45,12,.16), inset 0 0 0 8px rgba(154,52,18,.025);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .welcome-card::before {
+            content: 'ॐ';
+            position: absolute;
+            top: -48px;
+            right: 24px;
+            font-family: 'Noto Serif Devanagari', serif;
+            font-size: 180px;
+            line-height: 1;
+            color: var(--primary-accent);
+            opacity: .045;
+            pointer-events: none;
+        }
+
+        .welcome-architecture {
+            width: min(430px, 78vw);
+            margin: 0 auto 8px;
+            color: var(--primary-accent);
+            opacity: .92;
+            filter: drop-shadow(0 5px 8px rgba(92,45,12,.08));
+        }
+        .welcome-architecture svg { display:block; width:100%; height:auto; }
+        .welcome-architecture .arch-fill { fill: rgba(154,52,18,.035); }
+        .welcome-architecture .arch-line { fill:none; stroke:currentColor; stroke-width:2.2; }
+        .welcome-architecture .arch-fine { fill:none; stroke:currentColor; stroke-width:1.15; opacity:.58; }
+        .welcome-architecture .arch-solid { fill:currentColor; }
+        .welcome-architecture .arch-light { fill: rgba(154,52,18,.15); }
+
+        .welcome-kicker {
+            font-family: 'Lora', Georgia, serif;
+            font-size: clamp(20px, 4vw, 28px);
+            color: var(--meta-text);
+            letter-spacing: .06em;
+            margin-bottom: 10px;
+        }
+
+        .welcome-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(34px, 7vw, 58px);
+            line-height: 1.08;
+            color: var(--primary-accent);
+            margin: 0 0 18px;
+            letter-spacing: .02em;
+        }
+
+        .welcome-description {
+            margin: 0 auto;
+            max-width: 620px;
+            color: var(--meta-text);
+            font-size: clamp(15px, 2.8vw, 19px);
+            line-height: 1.75;
+            font-style: italic;
+        }
+
+        .welcome-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 34px;
+            flex-wrap: wrap;
+        }
+
+        .welcome-actions .btn {
+            min-width: 130px;
+            justify-content: center;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            background: var(--primary-accent);
+            color: #fff;
+            border-color: var(--primary-accent);
+            box-shadow: 0 8px 20px rgba(154,52,18,.18);
+        }
+
+        .btn-primary:hover {
+            background: var(--header-border);
+            border-color: var(--header-border);
+        }
+
+        .app-shell { display: none; }
+        .app-shell.is-visible { display: block; }
+
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 220;
+            margin: 0 -18px 14px;
+            padding: 14px 18px 12px;
+            background: color-mix(in srgb, var(--bg-color) 92%, transparent);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-header-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-brand { min-width: 0; flex: 1; }
+        .app-brand h1 { margin: 0; font-size: clamp(20px, 4vw, 29px); }
+        .app-brand .subheading { margin-top: 3px; font-size: clamp(11px, 2vw, 14px); }
+        .header-actions { display:flex; align-items:center; gap:8px; flex:0 0 auto; }
+        .header-actions .btn { min-height:44px; }
+
+        .header-icon-btn {
+            flex: 0 0 auto;
+            min-width: 44px;
+            min-height: 44px;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 19px;
+        }
+
+        .reader-toolbar {
+            position: sticky;
+            top: 76px;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            background: color-mix(in srgb, var(--controls-bg) 94%, transparent);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px var(--card-shadow);
+        }
+
+        .search-wrap { flex: 1; min-width: 0; position: relative; }
+        .search-wrap input { width: 100%; box-sizing: border-box; padding-left: 40px; }
+        .search-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--meta-text);
+            pointer-events: none;
+            font-family: sans-serif;
+        }
+
+        .bookmark-counter {
+            white-space: nowrap;
+            border-radius: 10px;
+            padding: 8px 11px;
+            background: var(--soft-bg);
+            border: 1px solid var(--soft-border);
+            color: var(--primary-accent);
+            font: 600 13px/1 sans-serif;
+            cursor: pointer;
+        }
+
+        .bookmark-counter.active { background: var(--primary-accent); color: #fff; }
+
+        .settings-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(15, 23, 42, .32);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s ease;
+        }
+
+        .settings-backdrop.open { opacity: 1; pointer-events: auto; }
+
+        .settings-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(390px, 92vw);
+            z-index: 510;
+            transform: translateX(105%);
+            transition: transform .25s ease;
+            background: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            box-shadow: -16px 0 45px rgba(0,0,0,.18);
+            padding: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .settings-drawer.open { transform: translateX(0); }
+        .settings-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px; }
+        .settings-head h2 { margin:0; font-family:'Cinzel',serif; color:var(--primary-accent); font-size:24px; }
+        .settings-section { border-top:1px solid var(--soft-divider); padding:18px 0; }
+        .settings-section:first-of-type { border-top:0; padding-top:0; }
+        .settings-label { display:block; margin-bottom:9px; font:700 12px/1.2 sans-serif; text-transform:uppercase; letter-spacing:.08em; color:var(--meta-text); }
+        .settings-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+        .settings-row .file-select { width:100%; min-width:0; box-sizing:border-box; }
+        .settings-row input[type=file] { width:100%; }
+        .settings-note { color:var(--meta-text); font-size:13px; line-height:1.5; margin-top:8px; }
+
+        .stats-bar { margin: 4px 2px 12px; }
+        .pagination { margin-top: 8px; }
+
+        .exit-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15,23,42,.48);
+            backdrop-filter: blur(4px);
+        }
+
+        .exit-modal-backdrop.open { display:flex; }
+        .exit-modal {
+            width:min(430px,100%);
+            background:var(--card-bg);
+            color:var(--text-color);
+            border:1px solid var(--border-color);
+            border-radius:18px;
+            padding:26px;
+            box-shadow:0 25px 80px rgba(0,0,0,.25);
+            text-align:center;
+        }
+        .exit-modal h2 { margin:0 0 10px; font-family:'Cinzel',serif; color:var(--primary-accent); }
+        .exit-modal p { margin:0; color:var(--meta-text); line-height:1.6; }
+        .exit-actions { display:flex; justify-content:center; gap:10px; margin-top:22px; }
+        .btn-danger { background:#991b1b; color:#fff; border-color:#991b1b; }
+        .btn-danger:hover { background:#7f1d1d; border-color:#7f1d1d; }
+
+        @media (max-width: 700px) {
+            .container { padding-left: 10px; padding-right: 10px; }
+            .app-header { margin-left:-10px; margin-right:-10px; padding-left:10px; padding-right:10px; }
+            .reader-toolbar { top:68px; padding:8px; }
+            .bookmark-counter { padding:8px 9px; }
+            .app-brand .subheading { display:none; }
+            .header-actions { gap:6px; }
+            #stopAudioBtn { padding-left:10px; padding-right:10px; }
+            .welcome-card { border-radius:22px; min-height:calc(100vh - 28px); }
+            .welcome-title { font-size:36px; }
+            .welcome-architecture { width:min(330px,78vw); }
+        }
+
     </style>
     <script>
         /* Apply the saved theme and font size before first paint to avoid a flash. */
@@ -516,65 +837,140 @@
             }
         })();
     </script>
-    <meta name="theme-color" content="#9a3412">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Dharmic Reader">
-    <link rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Dharmic Text Reader</h1>
-        <div class="subheading">Sacred Texts Offline Viewer with English/Kannada Auto-Translate &amp; Audio</div>
-    </header>
-
-    <div class="controls-sticky">
-        <div class="controls">
-            <input type="file" id="fileInput" accept=".json" multiple>
-            <select id="loadedFilesSelect" class="file-select" style="display: none;">
-                <option value="">-- Select Loaded File --</option>
-            </select>
-            <button class="btn" id="loadFirstFileBtn" style="display: none;">Load First File</button>
-            <input type="text" id="searchInput" placeholder="Search in Sanskrit, English, Kannada, or verse number..." disabled>
-            <button class="btn" id="bookmarkFilterBtn" title="Show only bookmarked verses">★ View Bookmarks (<span id="bookmarkCount">0</span>)</button>
-            <button class="btn" id="exportBookmarksBtn" title="Download all bookmarks as a JSON file">📤 Export Bookmarks</button>
-            <button class="btn" id="importBookmarksBtn" title="Merge bookmarks from a JSON file">📥 Import Bookmarks</button>
-            <input type="file" id="bookmarkImportInput" accept=".json,application/json" style="display: none;">
-            <button class="btn btn-stop" id="stopAudioBtn" onclick="stopAudio()" title="Stop audio narration">⏹ Stop Audio</button>
-            <button class="btn" id="themeToggleBtn" title="Toggle dark mode" aria-pressed="false">🌙 Dark</button>
-            <div class="control-group" role="group" aria-label="Text size">
-                <span class="control-label">Size</span>
-                <button class="btn btn-size" id="fontSizeSmallBtn" data-size="small" title="Small text">Small</button>
-                <button class="btn btn-size active" id="fontSizeMediumBtn" data-size="medium" title="Medium text">Medium</button>
-                <button class="btn btn-size" id="fontSizeLargeBtn" data-size="large" title="Large text">Large</button>
-            </div>
+<div id="welcomeScreen" class="welcome-screen" aria-label="Welcome screen">
+    <section class="welcome-card">
+        <div class="welcome-architecture" aria-hidden="true">
+            <svg viewBox="0 0 520 170" role="img">
+                <path class="arch-fill" d="M70 150V83C70 38 151 14 260 14s190 24 190 69v67H70Z"/>
+                <path class="arch-line" d="M44 154h432M70 150V83C70 38 151 14 260 14s190 24 190 69v67"/>
+                <path class="arch-line" d="M92 150V86c0-31 70-52 168-52s168 21 168 52v64"/>
+                <path class="arch-fine" d="M112 150V91c0-24 61-42 148-42s148 18 148 42v59"/>
+                <path class="arch-line" d="M86 150V71M108 150V76M412 150V76M434 150V71"/>
+                <path class="arch-fine" d="M54 112h412M64 126h392"/>
+                <path class="arch-solid" d="M35 150h66l-9-13H44zM419 150h66l-10-13h-48z"/>
+                <path class="arch-solid" d="M232 34h56l-10-13h-36zM246 21h28l-14-14z"/>
+                <circle class="arch-light" cx="260" cy="68" r="21"/>
+                <circle class="arch-fine" cx="260" cy="68" r="28"/>
+                <text x="260" y="77" text-anchor="middle" font-family="Noto Serif Devanagari, serif" font-size="28" fill="currentColor">ॐ</text>
+                <path class="arch-fine" d="M230 150c7-10 17-15 30-15s23 5 30 15M214 150c11-17 26-25 46-25s35 8 46 25"/>
+            </svg>
         </div>
-        <div class="stats-bar" id="statsBar">
-            <span id="statsMessage">Select JSON files from your device to begin (supports multiple selection).</span>
+        <div class="welcome-kicker">Welcome To</div>
+        <h1 class="welcome-title">Dharmic Text Reader</h1>
+        <p class="welcome-description">Sacred Texts Offline Viewer with English/Kannada Auto-Translate &amp; Audio</p>
+        <div class="welcome-actions">
+            <button class="btn btn-primary" id="continueBtn">Continue</button>
+            <button class="btn" id="welcomeLaterBtn">✕ Exit</button>
+        </div>
+    </section>
+</div>
+
+<div id="appShell" class="app-shell">
+    <div class="container">
+        <header class="app-header">
+            <div class="app-header-inner">
+                <div class="app-brand">
+                    <h1>Dharmic Text Reader</h1>
+                    <div class="subheading">Sacred Texts Offline Viewer with English/Kannada Auto-Translate &amp; Audio</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-stop" id="stopAudioBtn" onclick="stopAudio()" title="Stop audio narration">⏹ Stop Audio</button>
+                    <button class="btn btn-danger" id="headerExitBtn" title="Exit Dharmic Text Reader">✕ Exit</button>
+                    <button class="btn header-icon-btn" id="settingsOpenBtn" aria-label="Open Settings" title="Settings">⚙️</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="reader-toolbar">
+            <div class="search-wrap">
+                <span class="search-icon">🔎</span>
+                <input type="text" id="searchInput" placeholder="Search in Sanskrit, English, Kannada, or verse number..." disabled aria-label="Search text">
+            </div>
+            <button class="bookmark-counter" id="bookmarkFilterBtn" title="Show only bookmarked verses">🔖 <span id="bookmarkCount">0</span></button>
+        </div>
+
+        <div id="statsBar" class="stats-bar">
+            <span id="statsMessage">Loading Mahabharata sample…</span>
             <span id="fileBadge"></span>
         </div>
+
+        <div id="paginationControls" class="pagination" style="display:none;">
+            <button class="btn btn-sm" id="prevPageBtn" onclick="changePage(-1)">← Prev</button>
+            <span class="pagination-info" id="paginationInfo">Verses 1–0 of 0</span>
+            <span class="pagination-info" id="pageInfo">Page 1 of 1</span>
+            <button class="btn btn-sm" id="nextPageBtn" onclick="changePage(1)">Next →</button>
+            <span class="pagination-jump">
+                <label class="control-label" for="jumpToInput">Jump</label>
+                <input type="number" id="jumpToInput" min="1" step="1" placeholder="#" style="width:60px; padding:6px 8px;">
+                <button class="btn btn-sm" id="jumpToBtn" onclick="jumpToVerse()">Go</button>
+            </span>
+        </div>
+
+        <div id="displayArea">
+            <div class="empty-placeholder">
+                <p>Preparing the Mahabharata sample…</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings drawer -->
+<div id="settingsBackdrop" class="settings-backdrop"></div>
+<aside id="settingsDrawer" class="settings-drawer" aria-label="Settings" aria-hidden="true">
+    <div class="settings-head">
+        <h2>⚙️ Settings</h2>
+        <button class="btn header-icon-btn" id="settingsCloseBtn" aria-label="Close Settings">✕</button>
     </div>
 
-    <div id="paginationControls" class="pagination" style="display: none;">
-        <button class="btn" id="prevPageBtn" onclick="changePage(-1)">← Previous</button>
-        <span class="pagination-info" id="paginationInfo">Verses 1–0 of 0</span>
-        <span class="pagination-info" id="pageInfo">Page 1 of 1</span>
-        <button class="btn" id="nextPageBtn" onclick="changePage(1)">Next →</button>
-        <span class="pagination-jump">
-            <label class="control-label" for="jumpToInput">Jump to</label>
-            <input type="number" id="jumpToInput" min="1" step="1" placeholder="e.g. 51">
-            <button class="btn" id="jumpToBtn" onclick="jumpToVerse()">Go</button>
-        </span>
+    <div class="settings-section">
+        <span class="settings-label">Text size</span>
+        <div class="settings-row" role="group" aria-label="Text size">
+            <button class="btn btn-size" id="fontSizeSmallBtn" data-size="small">S</button>
+            <button class="btn btn-size active" id="fontSizeMediumBtn" data-size="medium">M</button>
+            <button class="btn btn-size" id="fontSizeLargeBtn" data-size="large">L</button>
+        </div>
     </div>
 
-    <div id="displayArea">
-        <div class="empty-placeholder">
-            <p>No dataset loaded. Click the file picker above to pick a chapter file.</p>
-            <button class="btn" id="loadSampleBtn" onclick="loadSampleDataset()">📖 Load Sample (Bhagavad Gita, Ch. 1)</button>
+    <div class="settings-section">
+        <span class="settings-label">Appearance &amp; audio</span>
+        <div class="settings-row">
+            <button class="btn" id="themeToggleBtn" title="Toggle dark mode" aria-pressed="false">🌙 Dark</button>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <span class="settings-label">Load text files</span>
+        <div class="settings-row">
+            <input type="file" id="fileInput" accept=".json" multiple>
+            <select id="loadedFilesSelect" class="file-select" style="display:none;">
+                <option value="">-- Select Loaded File --</option>
+            </select>
+            <button class="btn" id="loadFirstFileBtn" style="display:none;">Load First File</button>
+        </div>
+        <div class="settings-note">Your local JSON library remains on your device. Select one or more text files whenever you want to read another work.</div>
+    </div>
+
+    <div class="settings-section">
+        <span class="settings-label">Bookmarks</span>
+        <div class="settings-row">
+            <button class="btn" id="exportBookmarksBtn">📤 Export</button>
+            <button class="btn" id="importBookmarksBtn">📥 Import</button>
+        </div>
+        <input type="file" id="bookmarkImportInput" accept=".json,application/json" style="display:none;">
+    </div>
+</aside>
+
+<!-- Exit confirmation -->
+<div id="exitModalBackdrop" class="exit-modal-backdrop" role="presentation">
+    <div class="exit-modal" role="dialog" aria-modal="true" aria-labelledby="exitDialogTitle">
+        <h2 id="exitDialogTitle">Do you want to Exit or Cancel?</h2>
+        <p>Your current reading session will remain saved where applicable.</p>
+        <div class="exit-actions">
+            <button class="btn" id="exitCancelBtn">Cancel</button>
+            <button class="btn btn-danger" id="exitConfirmBtn">Exit</button>
         </div>
     </div>
 </div>
@@ -589,9 +985,9 @@
     };
 
     const FONT_SIZES = { small: 14, medium: 16, large: 19 };
-    const DEFAULT_STATUS = 'Select JSON files from your device to begin (supports multiple selection).';
-    const SAMPLE_FILE_NAME = 'bhagavad-gita-ch1.json';
-    const SAMPLE_FILE_PATH = 'assets/samples/bhagavad-gita-ch1.json';
+    const DEFAULT_STATUS = 'Mahabharata sample is loading…';
+    const SAMPLE_FILE_NAME = 'mahabharata_book_1.json';
+    const SAMPLE_FILE_PATH = 'assets/samples/mahabharata_book_1.json';
     const STATUS_TIMEOUT_MS = 4000;
     const TRANSLATION_CACHE_LIMIT = 500;
 
@@ -901,7 +1297,7 @@
 
     function renderTranslatedText(targetDiv, translatedText, targetLangCode) {
         targetDiv.textContent = translatedText;
-        const speechLang = targetLangCode === 'en' ? 'en-US' : 'kn-IN';
+        const speechLang = targetLangCode === 'en' ? 'en-IN' : 'kn-IN';
         targetDiv.setAttribute('data-lang', speechLang);
     }
 
@@ -920,37 +1316,292 @@
      * Audio
      * --------------------------------------------------------------- */
 
-    function playAudio(text, lang = 'hi-IN') {
+    /* ---------------------------------------------------------------
+     * Audio / TTS
+     *
+     * Kannada is handled specially because Android Chrome/PWA voice
+     * availability is device-dependent. We first use the installed
+     * browser voice when available; if no Kannada voice is exposed,
+     * we fall back to Google's online Kannada speech endpoint.
+     * --------------------------------------------------------------- */
+
+    let fallbackAudio = null;
+    let fallbackAudioQueue = [];
+    let fallbackAudioIndex = 0;
+
+    function normalizeVoiceLang(lang) {
+        return String(lang || '').toLowerCase().replace(/_/g, '-');
+    }
+
+    function getAvailableVoices() {
+        if (!('speechSynthesis' in window)) return [];
+        return window.speechSynthesis.getVoices() || [];
+    }
+
+    // STRICT preferred voices for this application.
+    // English MUST use Microsoft Prabhat Online (Natural) - English (India).
+    // We do not silently substitute another English voice.
+    const PREFERRED_TTS_VOICES = {
+        'en-in': 'Microsoft Prabhat Online (Natural) - English (India)',
+        'kn-in': 'Microsoft Kannada Online (Natural) - Kannada (India)'
+    };
+
+    function findPreferredVoice(voices, lang) {
+        const wanted = normalizeVoiceLang(lang);
+
+        // ENGLISH: Prabhat is the first choice, but English must still speak
+        // when another browser does not expose Prabhat.
+        if (wanted === 'en-in') {
+            const prabhat = voices.find(v =>
+                normalizeVoiceLang(v.lang) === 'en-in' &&
+                /prabhat/i.test(String(v.name || ''))
+            );
+            if (prabhat) return prabhat;
+
+            // Any en-IN voice is the next-best choice.
+            const enIn = voices.find(v => normalizeVoiceLang(v.lang) === 'en-in');
+            if (enIn) return enIn;
+
+            // Final English fallback so Chrome/Brave/Firefox always produce audio.
+            return voices.find(v => normalizeVoiceLang(v.lang).startsWith('en-'))
+                || voices.find(v => normalizeVoiceLang(v.lang) === 'en')
+                || null;
+        }
+
+        // Kannada: prefer Microsoft's Kannada Natural voice when exposed.
+        if (wanted === 'kn-in') {
+            return voices.find(v =>
+                normalizeVoiceLang(v.lang) === 'kn-in' &&
+                /microsoft/i.test(String(v.name || '')) &&
+                /kannada/i.test(String(v.name || '')) &&
+                /natural/i.test(String(v.name || ''))
+            ) || voices.find(v => normalizeVoiceLang(v.lang) === 'kn-in') || null;
+        }
+
+        return voices.find(v => normalizeVoiceLang(v.lang) === wanted)
+            || voices.find(v => normalizeVoiceLang(v.lang).split('-')[0] === wanted.split('-')[0])
+            || null;
+    }
+
+    function getVoiceStatusName(voice) {
+        return voice ? `${voice.name} [${voice.lang}]` : 'No matching voice';
+    }
+
+    function waitForVoices(timeoutMs = 2000) {
+        return new Promise(resolve => {
+            const existing = getAvailableVoices();
+            if (existing.length) {
+                resolve(existing);
+                return;
+            }
+
+            let settled = false;
+            const finish = () => {
+                if (settled) return;
+                settled = true;
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.removeEventListener('voiceschanged', finish);
+                }
+                resolve(getAvailableVoices());
+            };
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.addEventListener('voiceschanged', finish, { once: true });
+            }
+            setTimeout(finish, timeoutMs);
+        });
+    }
+
+    function splitTtsText(text, maxLength = 180) {
+        const clean = String(text || '').replace(/\s+/g, ' ').trim();
+        if (!clean) return [];
+
+        const chunks = [];
+        let remaining = clean;
+
+        while (remaining.length > maxLength) {
+            let cut = remaining.lastIndexOf(' ', maxLength);
+            if (cut < 80) cut = maxLength;
+
+            const candidate = remaining.slice(0, cut).trim();
+            chunks.push(candidate);
+            remaining = remaining.slice(cut).trim();
+        }
+
+        if (remaining) chunks.push(remaining);
+        return chunks;
+    }
+
+    function stopFallbackAudio() {
+        fallbackAudioQueue = [];
+        fallbackAudioIndex = 0;
+
+        if (fallbackAudio) {
+            try {
+                fallbackAudio.pause();
+                fallbackAudio.removeAttribute('src');
+                fallbackAudio.load();
+            } catch (e) {
+                /* Ignore cleanup errors. */
+            }
+        }
+    }
+
+    function playGoogleKannadaFallback(text) {
+        const chunks = splitTtsText(text, 180);
+
+        if (!chunks.length) {
+            showStatus('There is no Kannada text available to read aloud.');
+            return;
+        }
+
+        stopFallbackAudio();
+        fallbackAudioQueue = chunks;
+        fallbackAudioIndex = 0;
+
+        if (!fallbackAudio) {
+            fallbackAudio = new Audio();
+            fallbackAudio.preload = 'auto';
+        }
+
+        const playNext = () => {
+            if (fallbackAudioIndex >= fallbackAudioQueue.length) {
+                fallbackAudioQueue = [];
+                fallbackAudioIndex = 0;
+                return;
+            }
+
+            const chunk = fallbackAudioQueue[fallbackAudioIndex++];
+            const url =
+                'https://translate.google.com/translate_tts' +
+                '?ie=UTF-8&client=tw-ob&tl=kn&dt=t&q=' +
+                encodeURIComponent(chunk);
+
+            fallbackAudio.src = url;
+            fallbackAudio.onended = playNext;
+            fallbackAudio.onerror = () => {
+                fallbackAudioQueue = [];
+                fallbackAudioIndex = 0;
+                showStatus('Kannada voice is unavailable. Please install Kannada voice data in Android Text-to-speech settings.');
+            };
+
+            const playPromise = fallbackAudio.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {
+                    fallbackAudioQueue = [];
+                    fallbackAudioIndex = 0;
+                    showStatus('Kannada audio needs an internet connection or an installed Kannada TTS voice.');
+                });
+            }
+        };
+
+        showStatus('Using Kannada voice…');
+        playNext();
+    }
+
+    async function playAudio(text, lang = 'hi-IN') {
         if (!text || text.trim() === '' || text === '—') {
             showStatus('There is no text available to read aloud for this verse.');
             return;
         }
 
+        stopFallbackAudio();
+
         if (window.AndroidTTS && typeof window.AndroidTTS.speak === 'function') {
             window.AndroidTTS.speak(text, lang);
-        } else if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
-            utterance.rate = (lang.startsWith('hi') || lang.startsWith('sa') || lang.startsWith('kn')) ? 0.85 : 0.95;
-            const voices = window.speechSynthesis.getVoices();
-            const matchingVoice = voices.find(v => v.lang === lang || v.lang.startsWith(lang.split('-')[0]));
-            if (matchingVoice) {
-                utterance.voice = matchingVoice;
-            }
-            window.speechSynthesis.speak(utterance);
-        } else {
-            showStatus('Speech synthesis is not supported on this browser or device.');
+            return;
         }
+
+        if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+            if (normalizeVoiceLang(lang).startsWith('kn')) {
+                playGoogleKannadaFallback(text);
+            } else {
+                showStatus('Speech synthesis is not supported on this browser or device.');
+            }
+            return;
+        }
+
+        const voices = await waitForVoices();
+        const wanted = normalizeVoiceLang(lang);
+        const preferredName = PREFERRED_TTS_VOICES[wanted];
+        const matchingVoice = findPreferredVoice(voices, lang);
+
+        // ENGLISH: Prabhat is preferred, but never leave English silent.
+        if (wanted === 'en-in' && !matchingVoice) {
+            console.warn('No English voice exposed by this browser. Voices:', voices);
+            showStatus('No English voice is available in this browser.');
+            return;
+        }
+
+        // Kannada: never silently use another language. Use the online fallback
+        // when a Kannada voice is not exposed by the browser.
+        if (wanted.startsWith('kn') && !matchingVoice) {
+            playGoogleKannadaFallback(text);
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = wanted;
+        // English: Prabhat can run at normal-slow speed; any fallback
+        // English/en-IN voice is deliberately slower for clarity.
+        const englishIsPrabhat = wanted === 'en-in' && matchingVoice && /prabhat/i.test(String(matchingVoice.name || ''));
+        utterance.rate =
+            wanted.startsWith('hi') || wanted.startsWith('sa') || wanted.startsWith('kn')
+                ? 0.85
+                : wanted.startsWith('en')
+                    ? (englishIsPrabhat ? 0.84 : 0.68)
+                    : 0.95;
+        utterance.pitch = 1.0;
+
+        if (matchingVoice) {
+            // This is the critical line: explicitly bind the utterance to the
+            // selected voice rather than allowing the browser to choose one.
+            utterance.voice = matchingVoice;
+        }
+
+        const voiceLabel = getVoiceStatusName(matchingVoice);
+        if (wanted === 'en-in') {
+            const isPrabhat = matchingVoice && /prabhat/i.test(String(matchingVoice.name || ''));
+            showStatus(isPrabhat ? `Using Prabhat — ${voiceLabel}.` : `Using ${voiceLabel}.`);
+            console.log('DHARMIC TTS:', {
+                requestedLanguage: wanted,
+                preferredVoice: preferredName,
+                selectedVoice: matchingVoice ? matchingVoice.name : null,
+                selectedVoiceLang: matchingVoice ? matchingVoice.lang : null,
+                selectedVoiceURI: matchingVoice ? matchingVoice.voiceURI : null,
+                prabhatSelected: !!isPrabhat
+            });
+        } else if (wanted === 'kn-in' && matchingVoice) {
+            showStatus(`Using ${voiceLabel}.`);
+        }
+
+        utterance.onerror = (event) => {
+            console.warn('Speech synthesis error:', event.error, voiceLabel);
+
+            if (wanted.startsWith('kn')) {
+                playGoogleKannadaFallback(text);
+            } else {
+                showStatus(`Audio playback failed using ${voiceLabel}.`);
+            }
+        };
+
+        window.speechSynthesis.speak(utterance);
     }
 
     function stopAudio() {
         if (window.AndroidTTS && typeof window.AndroidTTS.stop === 'function') {
             window.AndroidTTS.stop();
         }
+
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
         }
+
+        stopFallbackAudio();
     }
+
 
     /* ---------------------------------------------------------------
      * Translation
@@ -1092,26 +1743,28 @@
     }
 
     async function loadSampleDataset() {
-        showStatus('Loading bundled sample (Bhagavad Gita, Chapter 1)…', 0);
+        showStatus('Loading bundled sample (Mahabharata, Book 1)…', 0);
 
         try {
-            const res = await fetch(SAMPLE_FILE_PATH);
+            const res = await fetch(SAMPLE_FILE_PATH, { cache: 'no-cache' });
             if (!res.ok) {
                 throw new Error('HTTP ' + res.status);
             }
 
             const data = await res.json();
-            const sample = Array.isArray(data.BhagavadGitaChapter) ? data.BhagavadGitaChapter : data;
-
             loadedFiles[SAMPLE_FILE_NAME] = data;
             addLoadedFileOption(SAMPLE_FILE_NAME);
             refreshLoadedFilesUI();
             selectLoadedFile(SAMPLE_FILE_NAME);
 
-            showStatus(`Sample dataset ready: Bhagavad Gita, Chapter 1 (${sample.length} verses).`);
+            const sampleItems = Array.isArray(data) ? data :
+                (Array.isArray(data.verses) ? data.verses :
+                (Array.isArray(data.items) ? data.items :
+                (Array.isArray(data.Mahabharata) ? data.Mahabharata : Object.keys(data))));
+            showStatus(`Sample dataset ready: Mahabharata, Book 1 (${sampleItems.length} entries).`);
         } catch (err) {
-            console.error('Sample dataset could not be loaded:', err);
-            showStatus('Could not load the bundled sample. Pick a JSON file, or reinstall the app to restore the sample data.');
+            console.error('Mahabharata sample could not be loaded:', err);
+            showStatus('Mahabharata sample is not bundled yet. Add assets/samples/mahabharata_book_1.json, then reload the app.');
             renderEmptyState();
         }
     }
@@ -1124,7 +1777,7 @@
         document.getElementById('displayArea').innerHTML =
             '<div class="empty-placeholder">' +
             '<p>No dataset loaded. Click the file picker above to pick a chapter file.</p>' +
-            '<button class="btn" id="loadSampleBtn" onclick="loadSampleDataset()">📖 Load Sample (Bhagavad Gita, Ch. 1)</button>' +
+            '<button class="btn" id="loadSampleBtn" onclick="loadSampleDataset()">📖 Load Sample (Mahabharata, Book 1)</button>' +
             '</div>';
     }
 
@@ -1402,7 +2055,7 @@
                                 <button class="btn-icon" id="play_trans_${displayIndex}" title="Listen to Translation">🔊 Listen</button>
                             </div>
                         </div>
-                        <div class="translation-text" id="trans_text_${displayIndex}" data-lang="en-US">
+                        <div class="translation-text" id="trans_text_${displayIndex}" data-lang="en-IN">
                             ${hasPreloadedTranslation ? translationText : 'No preloaded translation. Click EN or ಕನ್ನಡ above to translate.'}
                         </div>
                     </div>
@@ -1423,7 +2076,7 @@
             document.getElementById(`play_trans_${displayIndex}`).addEventListener('click', () => {
                 const transDiv = document.getElementById(`trans_text_${displayIndex}`);
                 const currentTranslationContent = transDiv.innerText;
-                const currentLang = transDiv.getAttribute('data-lang') || 'en-US';
+                const currentLang = transDiv.getAttribute('data-lang') || 'en-IN';
                 playAudio(currentTranslationContent, currentLang);
             });
 
@@ -1440,6 +2093,113 @@
             });
         });
     }
+
+    /* ---------------------------------------------------------------
+     * v3.1 UI: architectural welcome screen, settings drawer and exit guard
+     * --------------------------------------------------------------- */
+    let allowHistoryExit = false;
+    let exitDialogOpen = false;
+
+    function enterReader() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('appShell').classList.add('is-visible');
+        window.scrollTo(0, 0);
+    }
+
+    function openSettings() {
+        document.getElementById('settingsDrawer').classList.add('open');
+        document.getElementById('settingsBackdrop').classList.add('open');
+        document.getElementById('settingsDrawer').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSettings() {
+        document.getElementById('settingsDrawer').classList.remove('open');
+        document.getElementById('settingsBackdrop').classList.remove('open');
+        document.getElementById('settingsDrawer').setAttribute('aria-hidden', 'true');
+    }
+
+    function openExitDialog() {
+        exitDialogOpen = true;
+        closeSettings();
+        document.getElementById('exitModalBackdrop').classList.add('open');
+        setTimeout(() => document.getElementById('exitCancelBtn').focus(), 0);
+    }
+
+    function closeExitDialog() {
+        exitDialogOpen = false;
+        document.getElementById('exitModalBackdrop').classList.remove('open');
+    }
+
+    async function confirmExit() {
+        closeExitDialog();
+        closeSettings();
+        try { stopAudio(); } catch (e) {}
+
+        // Native Android/Capacitor bridges. Use whichever bridge the host exposes.
+        const nativeExitCalls = [
+            async () => window.Capacitor?.Plugins?.App?.exitApp?.(),
+            async () => window.AndroidApp?.exitApp?.(),
+            async () => window.Android?.exitApp?.(),
+            async () => window.App?.exitApp?.(),
+            async () => window.navigator?.app?.exitApp?.()
+        ];
+        for (const call of nativeExitCalls) {
+            try {
+                const result = await call();
+                if (result !== undefined) return;
+            } catch (e) {}
+        }
+
+        // Browser/PWA: window.close() is only permitted for script-opened
+        // windows. Still try it first; some embedded/webview hosts allow it.
+        try {
+            window.open('', '_self');
+            window.close();
+        } catch (e) {}
+
+        // If the browser refuses close(), leave the current app entry.
+        // This is the maximum a normal PWA can do without a native bridge.
+        allowHistoryExit = true;
+        try {
+            if (window.history.length > 1) {
+                window.history.back();
+                return;
+            }
+        } catch (e) {}
+
+        // Standalone PWAs cannot be forcibly terminated by page JavaScript.
+        // Keep the app usable and make the limitation explicit.
+        showStatus('Browser security prevents a PWA from closing itself. Use the browser/app Back or Home control to exit.');
+    }
+
+    function armBackGuard() {
+        try {
+            window.history.replaceState({ dharmicReaderGuard: true }, '', window.location.href);
+            window.history.pushState({ dharmicReaderGuard: true }, '', window.location.href);
+        } catch (e) { /* History API may be restricted in unusual webviews. */ }
+    }
+
+    document.getElementById('continueBtn').addEventListener('click', enterReader);
+    document.getElementById('headerExitBtn').addEventListener('click', openExitDialog);
+    document.getElementById('welcomeLaterBtn').addEventListener('click', openExitDialog);
+    document.getElementById('settingsOpenBtn').addEventListener('click', openSettings);
+    document.getElementById('settingsCloseBtn').addEventListener('click', closeSettings);
+    document.getElementById('settingsBackdrop').addEventListener('click', closeSettings);
+    document.getElementById('exitCancelBtn').addEventListener('click', closeExitDialog);
+    document.getElementById('exitConfirmBtn').addEventListener('click', confirmExit);
+
+    window.addEventListener('popstate', () => {
+        if (allowHistoryExit) return;
+        openExitDialog();
+        try { window.history.pushState({ dharmicReaderGuard: true }, '', window.location.href); } catch (e) {}
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (exitDialogOpen) closeExitDialog();
+            else closeSettings();
+        }
+    });
 
     /* ---------------------------------------------------------------
      * Event wiring
@@ -1505,6 +2265,12 @@
         }
         else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.verses)) {
             currentData = parsed.verses;
+        }
+        else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.items)) {
+            currentData = parsed.items;
+        }
+        else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.Mahabharata)) {
+            currentData = parsed.Mahabharata;
         }
         else {
             currentData = parsed;
@@ -1572,6 +2338,8 @@
 
     window.addEventListener('load', () => {
         if ('speechSynthesis' in window) {
+            // Force Android/Chrome to populate its voice list as early as possible.
+            window.speechSynthesis.getVoices();
             window.speechSynthesis.onvoiceschanged = () => {
                 window.speechSynthesis.getVoices();
             };
@@ -1580,6 +2348,9 @@
         applyTheme(getStoredTheme() || 'light');
         applyFontSize(getStoredFontSize() || 'medium');
         updateBookmarkCountDisplay();
+        armBackGuard();
+        document.getElementById('welcomeScreen').style.display = 'flex';
+        document.getElementById('appShell').classList.remove('is-visible');
 
         const lastFile = getLastOpenedFile();
         const names = Object.keys(loadedFiles);
@@ -1592,9 +2363,7 @@
 
         if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
             window.Capacitor.Plugins.App.addListener('backButton', () => {
-                if (confirm('Do you want to exit Dharmic Reader?')) {
-                    window.Capacitor.Plugins.App.exitApp();
-                }
+                openExitDialog();
             });
         }
     });
@@ -1607,17 +2376,23 @@
      * regenerated on macOS with `npx @capacitor/assets generate --ios` and then
      * verified/released from Xcode (see ios/App/App/Assets.xcassets).
      */
+    /* ---------------------------------------------------------------
+     * PWA service worker
+     * --------------------------------------------------------------- */
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(registration => {
+                    console.log('Dharmic Reader service worker registered:', registration.scope);
+                })
+                .catch(error => {
+                    console.error('Dharmic Reader service worker registration failed:', error);
+                });
+        });
+    }
+
 </script>
 
-<script>
-  // PWA service worker registration
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js")
-        .then(reg => console.log("Dharmic Reader PWA service worker registered:", reg.scope))
-        .catch(err => console.warn("Dharmic Reader PWA service worker registration failed:", err));
-    });
-  }
-</script>
 </body>
 </html>
