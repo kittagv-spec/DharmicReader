@@ -805,6 +805,42 @@
         .btn-danger { background:#991b1b; color:#fff; border-color:#991b1b; }
         .btn-danger:hover { background:#7f1d1d; border-color:#7f1d1d; }
 
+
+        .update-banner {
+            position: fixed;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%) translateY(130%);
+            z-index: 1200;
+            width: min(520px, calc(100vw - 28px));
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 12px 14px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: 0 14px 40px rgba(0,0,0,.22);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform .25s ease, opacity .25s ease;
+        }
+        .update-banner.open {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .update-banner-text { font: 600 14px/1.35 sans-serif; }
+        .update-banner-actions { display:flex; gap:8px; flex-shrink:0; }
+        .update-banner .btn { white-space:nowrap; }
+        @media (max-width:700px) {
+            .update-banner { bottom: 12px; align-items: flex-start; }
+            .update-banner-actions { flex-direction: column; }
+        }
+
         @media (max-width: 700px) {
             .container { padding-left: 10px; padding-right: 10px; }
             .app-header { margin-left:-10px; margin-right:-10px; padding-left:10px; padding-right:10px; }
@@ -962,6 +998,15 @@
         <input type="file" id="bookmarkImportInput" accept=".json,application/json" style="display:none;">
     </div>
 </aside>
+
+<!-- App update notification -->
+<div id="updateBanner" class="update-banner" role="status" aria-live="polite">
+    <div class="update-banner-text">A new Dharmic Reader version is available.</div>
+    <div class="update-banner-actions">
+        <button class="btn" id="updateLaterBtn">Later</button>
+        <button class="btn btn-danger" id="updateNowBtn">Update now</button>
+    </div>
+</div>
 
 <!-- Exit confirmation -->
 <div id="exitModalBackdrop" class="exit-modal-backdrop" role="presentation">
@@ -2382,9 +2427,50 @@
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
+            let refreshingAfterUpdate = false;
+            const updateBanner = document.getElementById('updateBanner');
+            const updateNowBtn = document.getElementById('updateNowBtn');
+            const updateLaterBtn = document.getElementById('updateLaterBtn');
+
+            function showUpdateBanner(registration) {
+                if (!registration || !registration.waiting) return;
+                updateBanner.classList.add('open');
+                updateNowBtn.onclick = () => {
+                    updateNowBtn.disabled = true;
+                    updateNowBtn.textContent = 'Updating…';
+                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                };
+                updateLaterBtn.onclick = () => {
+                    updateBanner.classList.remove('open');
+                };
+            }
+
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshingAfterUpdate) return;
+                refreshingAfterUpdate = true;
+                window.location.reload();
+            });
+
             navigator.serviceWorker.register('./service-worker.js')
                 .then(registration => {
                     console.log('Dharmic Reader service worker registered:', registration.scope);
+
+                    if (registration.waiting) {
+                        showUpdateBanner(registration);
+                    }
+
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (!newWorker) return;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                showUpdateBanner(registration);
+                            }
+                        });
+                    });
+
+                    // Ask the browser to check for a newer service worker now.
+                    registration.update().catch(() => {});
                 })
                 .catch(error => {
                     console.error('Dharmic Reader service worker registration failed:', error);

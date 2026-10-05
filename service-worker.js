@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dharmic-reader-v3-5-final';
+const CACHE_NAME = 'dharmic-reader-v3-6-update-prompt';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,13 +7,19 @@ const APP_SHELL = [
   './icons/icon-512.png'
 ];
 
-// v3.5 English TTS + Exit build
+// v3.6 English TTS + Exit + automatic update prompt
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
   );
+});
+
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', event => {
