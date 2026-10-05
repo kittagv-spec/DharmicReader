@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Dharmic Text Reader &amp; Viewer</title>
+    <!-- Google Fonts: Devanagari + Latin Serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&amp;family=Lora:ital,wght@0,400;0,600;1,400&amp;family=Noto+Serif+Devanagari:wght@400;600;700&amp;family=Yatra+One&amp;display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #fdfbf7;
+            --card-bg: #ffffff;
+            --primary-accent: #9a3412;
+            --header-border: #f97316;
+            --sanskrit-text: #1e1b4b;
+            --translation-text: #334155;
+            --meta-text: #64748b;
+            --border-color: #fed7aa;
+            --text-color: #1f2937;
+
+            /* Theme-aware surfaces */
+            --controls-bg: #ffffffeb;
+            --card-border: #fed7aa;
+            --soft-bg: #fff7ed;
+            --soft-bg-hover: #ffedd5;
+            --soft-border: #fdba74;
+            --soft-hover-border: #fb923c;
+            --soft-divider: #ffedd5;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --input-text: #1e293b;
+            --icon-border: #e2e8f0;
+            --icon-text: #475569;
+            --icon-hover-bg: #f1f5f9;
+            --icon-hover-border: #cbd5e1;
+            --bm-bg: #fef08a;
+            --bm-border: #facc15;
+            --bm-text: #854d0e;
+            --stop-bg: #fee2e2;
+            --stop-text: #991b1b;
+            --stop-border: #fca5a5;
+            --stop-hover: #fecaca;
+            --sanskrit-bg: #fffbf5;
+            --sanskrit-border: #fef3c7;
+            --translation-bg: #fafafa;
+            --translation-border: #f1f5f9;
+            --extra-border: #e2e8f0;
+            --extra-text: #475569;
+            --empty-text: #94a3b8;
+            --link-color: #0369a1;
+            --error-color: #b91c1c;
+            --card-shadow: rgba(0, 0, 0, 0.03);
+            --card-shadow-hover: rgba(0, 0, 0, 0.07);
+
+            /* Typography scale (driven by --base-font-size) */
+            --base-font-size: 16px;
+            --fs-xs: calc(var(--base-font-size) * 0.6875);
+            --fs-sm: calc(var(--base-font-size) * 0.8125);
+            --fs-md: calc(var(--base-font-size) * 0.875);
+            --fs-base: var(--base-font-size);
+            --fs-lg: calc(var(--base-font-size) * 1.25);
+            --fs-xl: calc(var(--base-font-size) * 1.75);
+
+            color-scheme: light;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #14110f;
+            --card-bg: #1c1917;
+            --primary-accent: #fbbf24;
+            --header-border: #f59e0b;
+            --sanskrit-text: #ede9e4;
+            --translation-text: #d6d3d1;
+            --meta-text: #a8a29e;
+            --border-color: #44403c;
+            --text-color: #e7e5e0;
+
+            --controls-bg: #1c1917eb;
+            --card-border: #44403c;
+            --soft-bg: #292524;
+            --soft-bg-hover: #3a332f;
+            --soft-border: #57534e;
+            --soft-hover-border: #d97706;
+            --soft-divider: #3a332f;
+            --input-bg: #231f1d;
+            --input-border: #57534e;
+            --input-text: #f5f5f4;
+            --icon-border: #44403c;
+            --icon-text: #a8a29e;
+            --icon-hover-bg: #2c2a28;
+            --icon-hover-border: #57534e;
+            --bm-bg: #a16207;
+            --bm-border: #ca8a04;
+            --bm-text: #fef9c3;
+            --stop-bg: #7f1d1d;
+            --stop-text: #fee2e2;
+            --stop-border: #b91c1c;
+            --stop-hover: #991b1b;
+            --sanskrit-bg: #232019;
+            --sanskrit-border: #4d442f;
+            --translation-bg: #1f1d1b;
+            --translation-border: #33302e;
+            --extra-border: #3d3a38;
+            --extra-text: #d6d3d1;
+            --empty-text: #78716c;
+            --link-color: #7dd3fc;
+            --error-color: #fca5a5;
+            --card-shadow: rgba(0, 0, 0, 0.35);
+            --card-shadow-hover: rgba(0, 0, 0, 0.55);
+
+            color-scheme: dark;
+        }
+
+        body {
+            font-family: 'Lora', Georgia, serif;
+            font-size: var(--base-font-size);
+            margin: 0;
+            padding: 24px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-accent);
+            letter-spacing: 1px;
+            margin: 0 0 6px 0;
+            font-size: var(--fs-xl);
+        }
+
+        .subheading {
+            font-size: var(--fs-md);
+            color: var(--meta-text);
+            font-style: italic;
+        }
+
+        .controls-sticky {
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+            background: var(--controls-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 16px var(--card-shadow);
+            padding: 14px 20px;
+            margin-bottom: 24px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        input[type="file"] {
+            font-family: inherit;
+            font-size: var(--fs-sm);
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 9px 14px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: var(--fs-md);
+            font-family: inherit;
+            background: var(--input-bg);
+            color: var(--input-text);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--header-border);
+            box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+        }
+
+        .file-select {
+            padding: 9px 14px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: var(--fs-md);
+            font-family: inherit;
+            background: var(--input-bg);
+            color: var(--input-text);
+            min-width: 200px;
+        }
+
+        .btn {
+            background-color: var(--soft-bg);
+            color: var(--primary-accent);
+            border: 1px solid var(--soft-border);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background-color: var(--soft-bg-hover);
+            border-color: var(--soft-hover-border);
+        }
+
+        .btn.active {
+            background-color: var(--primary-accent);
+            color: #ffffff;
+            border-color: var(--primary-accent);
+        }
+
+        .btn-stop {
+            background-color: var(--stop-bg);
+            color: var(--stop-text);
+            border-color: var(--stop-border);
+        }
+
+        .btn-stop:hover {
+            background-color: var(--stop-hover);
+        }
+
+        .control-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .control-label {
+            font-size: var(--fs-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--meta-text);
+            font-family: sans-serif;
+            margin-right: 2px;
+        }
+
+        .btn-size {
+            padding: 8px 10px;
+        }
+
+        .stats-bar {
+            margin-top: 8px;
+            font-size: var(--fs-sm);
+            color: var(--meta-text);
+            font-family: sans-serif;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        #statsMessage {
+            flex-grow: 1;
+        }
+
+        .verse-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--header-border);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 8px var(--card-shadow);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .verse-card:hover {
+            box-shadow: 0 4px 12px var(--card-shadow-hover);
+        }
+
+        .verse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--soft-divider);
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .verse-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .verse-tag {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--primary-accent);
+            font-size: var(--fs-base);
+            letter-spacing: 0.5px;
+        }
+
+        .verse-meta {
+            font-size: var(--fs-sm);
+            color: var(--meta-text);
+            font-family: sans-serif;
+        }
+
+        .verse-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: 1px solid var(--icon-border);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: var(--fs-sm);
+            cursor: pointer;
+            color: var(--icon-text);
+            transition: all 0.15s ease;
+            font-family: sans-serif;
+        }
+
+        .btn-icon:hover:enabled {
+            background: var(--icon-hover-bg);
+            border-color: var(--icon-hover-border);
+        }
+
+        .btn-icon:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-icon.bookmarked {
+            background: var(--bm-bg);
+            border-color: var(--bm-border);
+            color: var(--bm-text);
+            font-weight: 600;
+        }
+
+        .btn-translate {
+            color: var(--link-color);
+        }
+
+        .inline-error {
+            color: var(--error-color);
+            font-family: sans-serif;
+            font-size: var(--fs-sm);
+        }
+
+        .columns-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .columns-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            body {
+                padding: 16px;
+            }
+        }
+
+        .column-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .column-label {
+            font-size: var(--fs-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--primary-accent);
+            font-family: sans-serif;
+        }
+
+        .sanskrit-text {
+            font-family: 'Noto Serif Devanagari', 'Yatra One', serif;
+            font-size: var(--fs-lg);
+            line-height: 1.9;
+            color: var(--sanskrit-text);
+            white-space: pre-wrap;
+            font-weight: 600;
+            background: var(--sanskrit-bg);
+            padding: 14px 18px;
+            border-radius: 6px;
+            border: 1px solid var(--sanskrit-border);
+            flex-grow: 1;
+        }
+
+        .translation-text {
+            font-family: 'Lora', Georgia, serif;
+            font-size: var(--fs-base);
+            line-height: 1.75;
+            color: var(--translation-text);
+            white-space: pre-wrap;
+            background: var(--translation-bg);
+            padding: 14px 18px;
+            border-radius: 6px;
+            border: 1px solid var(--translation-border);
+            flex-grow: 1;
+        }
+
+        .extra-fields {
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--extra-border);
+            font-size: var(--fs-md);
+            color: var(--extra-text);
+        }
+
+        .extra-field-row {
+            margin-bottom: 4px;
+        }
+
+        .extra-field-key {
+            font-weight: 600;
+            color: var(--meta-text);
+            text-transform: capitalize;
+        }
+
+        .empty-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--empty-text);
+            font-style: italic;
+        }
+
+        .empty-placeholder .btn {
+            font-style: normal;
+            margin-top: 18px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+            padding: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+        }
+
+        .pagination-info {
+            font-size: var(--fs-md);
+            color: var(--meta-text);
+            font-family: sans-serif;
+        }
+
+        .pagination-jump {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        input[type="number"] {
+            width: 90px;
+            padding: 8px 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: var(--fs-md);
+            font-family: inherit;
+            background: var(--input-bg);
+            color: var(--input-text);
+        }
+    </style>
+    <script>
+        /* Apply the saved theme and font size before first paint to avoid a flash. */
+        (function () {
+            try {
+                var theme = localStorage.getItem('dharmic_reader_theme');
+                if (theme === 'dark' || theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', theme);
+                }
+                var sizes = { small: 14, medium: 16, large: 19 };
+                var size = localStorage.getItem('dharmic_reader_fontsize');
+                if (size && sizes[size]) {
+                    document.documentElement.style.setProperty('--base-font-size', sizes[size] + 'px');
+                }
+            } catch (e) {
+                /* localStorage unavailable (private mode / disabled) - fall back to defaults. */
+            }
+        })();
+    </script>
+    <meta name="theme-color" content="#9a3412">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Dharmic Reader">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Dharmic Text Reader</h1>
+        <div class="subheading">Sacred Texts Offline Viewer with English/Kannada Auto-Translate &amp; Audio</div>
+    </header>
+
+    <div class="controls-sticky">
+        <div class="controls">
+            <input type="file" id="fileInput" accept=".json" multiple>
+            <select id="loadedFilesSelect" class="file-select" style="display: none;">
+                <option value="">-- Select Loaded File --</option>
+            </select>
+            <button class="btn" id="loadFirstFileBtn" style="display: none;">Load First File</button>
+            <input type="text" id="searchInput" placeholder="Search in Sanskrit, English, Kannada, or verse number..." disabled>
+            <button class="btn" id="bookmarkFilterBtn" title="Show only bookmarked verses">★ View Bookmarks (<span id="bookmarkCount">0</span>)</button>
+            <button class="btn" id="exportBookmarksBtn" title="Download all bookmarks as a JSON file">📤 Export Bookmarks</button>
+            <button class="btn" id="importBookmarksBtn" title="Merge bookmarks from a JSON file">📥 Import Bookmarks</button>
+            <input type="file" id="bookmarkImportInput" accept=".json,application/json" style="display: none;">
+            <button class="btn btn-stop" id="stopAudioBtn" onclick="stopAudio()" title="Stop audio narration">⏹ Stop Audio</button>
+            <button class="btn" id="themeToggleBtn" title="Toggle dark mode" aria-pressed="false">🌙 Dark</button>
+            <div class="control-group" role="group" aria-label="Text size">
+                <span class="control-label">Size</span>
+                <button class="btn btn-size" id="fontSizeSmallBtn" data-size="small" title="Small text">Small</button>
+                <button class="btn btn-size active" id="fontSizeMediumBtn" data-size="medium" title="Medium text">Medium</button>
+                <button class="btn btn-size" id="fontSizeLargeBtn" data-size="large" title="Large text">Large</button>
+            </div>
+        </div>
+        <div class="stats-bar" id="statsBar">
+            <span id="statsMessage">Select JSON files from your device to begin (supports multiple selection).</span>
+            <span id="fileBadge"></span>
+        </div>
+    </div>
+
+    <div id="paginationControls" class="pagination" style="display: none;">
+        <button class="btn" id="prevPageBtn" onclick="changePage(-1)">← Previous</button>
+        <span class="pagination-info" id="paginationInfo">Verses 1–0 of 0</span>
+        <span class="pagination-info" id="pageInfo">Page 1 of 1</span>
+        <button class="btn" id="nextPageBtn" onclick="changePage(1)">Next →</button>
+        <span class="pagination-jump">
+            <label class="control-label" for="jumpToInput">Jump to</label>
+            <input type="number" id="jumpToInput" min="1" step="1" placeholder="e.g. 51">
+            <button class="btn" id="jumpToBtn" onclick="jumpToVerse()">Go</button>
+        </span>
+    </div>
+
+    <div id="displayArea">
+        <div class="empty-placeholder">
+            <p>No dataset loaded. Click the file picker above to pick a chapter file.</p>
+            <button class="btn" id="loadSampleBtn" onclick="loadSampleDataset()">📖 Load Sample (Bhagavad Gita, Ch. 1)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEYS = {
+        theme: 'dharmic_reader_theme',
+        fontSize: 'dharmic_reader_fontsize',
+        bookmarks: 'dharmic_reader_bookmarks',
+        translations: 'dharmic_reader_translations',
+        lastFile: 'dharmic_reader_lastfile'
+    };
+
+    const FONT_SIZES = { small: 14, medium: 16, large: 19 };
+    const DEFAULT_STATUS = 'Select JSON files from your device to begin (supports multiple selection).';
+    const SAMPLE_FILE_NAME = 'bhagavad-gita-ch1.json';
+    const SAMPLE_FILE_PATH = 'assets/samples/bhagavad-gita-ch1.json';
+    const STATUS_TIMEOUT_MS = 4000;
+    const TRANSLATION_CACHE_LIMIT = 500;
+
+    let currentData = null;
+    let currentFileName = "default_file";
+    let currentItems = [];
+    let isShowingBookmarksOnly = false;
+    let currentPage = 1;
+    const itemsPerPage = 50;
+    let loadedFiles = {};
+    let userFileLoaded = false;
+    let statusTimer = null;
+    let baseStatus = DEFAULT_STATUS;
+
+    /* ---------------------------------------------------------------
+     * Status messages (replaces alert())
+     * --------------------------------------------------------------- */
+
+    function setStatusBase(text) {
+        baseStatus = text;
+        const el = document.getElementById('statsMessage');
+        if (el) el.textContent = text;
+        if (statusTimer) {
+            clearTimeout(statusTimer);
+            statusTimer = null;
+        }
+    }
+
+    function showStatus(message, duration) {
+        const el = document.getElementById('statsMessage');
+        if (!el) return;
+
+        el.textContent = message;
+
+        if (statusTimer) {
+            clearTimeout(statusTimer);
+            statusTimer = null;
+        }
+
+        const wait = (duration === undefined || duration === null) ? STATUS_TIMEOUT_MS : duration;
+        if (!wait) return;
+
+        statusTimer = setTimeout(() => {
+            statusTimer = null;
+            el.textContent = baseStatus || DEFAULT_STATUS;
+        }, wait);
+    }
+
+    /* ---------------------------------------------------------------
+     * Theme (dark mode)
+     * --------------------------------------------------------------- */
+
+    function getStoredTheme() {
+        try {
+            return localStorage.getItem(STORAGE_KEYS.theme);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function applyTheme(theme) {
+        const next = (theme === 'dark') ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) {
+            btn.textContent = (next === 'dark') ? '☀️ Light' : '🌙 Dark';
+            btn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+        }
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = (current === 'dark') ? 'light' : 'dark';
+
+        try {
+            localStorage.setItem(STORAGE_KEYS.theme, next);
+        } catch (e) {
+            /* Storage may be unavailable - the theme still applies for this session. */
+        }
+
+        applyTheme(next);
+        showStatus((next === 'dark') ? 'Dark mode enabled.' : 'Light mode enabled.', 2000);
+    }
+
+    /* ---------------------------------------------------------------
+     * Font size
+     * --------------------------------------------------------------- */
+
+    function getStoredFontSize() {
+        try {
+            return localStorage.getItem(STORAGE_KEYS.fontSize);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function applyFontSize(sizeKey) {
+        const key = FONT_SIZES[sizeKey] ? sizeKey : 'medium';
+        document.documentElement.style.setProperty('--base-font-size', FONT_SIZES[key] + 'px');
+
+        ['Small', 'Medium', 'Large'].forEach(name => {
+            const btn = document.getElementById('fontSize' + name + 'Btn');
+            if (btn) btn.classList.toggle('active', btn.dataset.size === key);
+        });
+
+        return key;
+    }
+
+    function setFontSize(sizeKey, announce) {
+        const key = applyFontSize(sizeKey);
+
+        try {
+            localStorage.setItem(STORAGE_KEYS.fontSize, key);
+        } catch (e) {
+            /* Storage may be unavailable - the size still applies for this session. */
+        }
+
+        if (announce) {
+            showStatus('Text size set to ' + key + '.', 2000);
+        }
+    }
+
+    /* ---------------------------------------------------------------
+     * Bookmarks
+     * --------------------------------------------------------------- */
+
+    function getStoredBookmarks() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.bookmarks) || '{}');
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveStoredBookmarks(bookmarks) {
+        try {
+            localStorage.setItem(STORAGE_KEYS.bookmarks, JSON.stringify(bookmarks));
+        } catch (e) {
+            showStatus('Could not save bookmarks: device storage is unavailable.');
+        }
+        updateBookmarkCountDisplay();
+    }
+
+    function updateBookmarkCountDisplay() {
+        const bookmarks = getStoredBookmarks();
+        document.getElementById('bookmarkCount').textContent = Object.keys(bookmarks).length;
+    }
+
+    function makeBookmarkKey(fileName, verseTag, index) {
+        return `${fileName}_${verseTag}_${index}`;
+    }
+
+    function toggleBookmark(key, itemData) {
+        const bookmarks = getStoredBookmarks();
+        if (bookmarks[key]) {
+            delete bookmarks[key];
+        } else {
+            bookmarks[key] = itemData;
+        }
+        saveStoredBookmarks(bookmarks);
+
+        if (isShowingBookmarksOnly) {
+            renderBookmarks();
+        } else {
+            applyFilterAndRender();
+        }
+    }
+
+    function exportBookmarks() {
+        const bookmarks = getStoredBookmarks();
+        const keys = Object.keys(bookmarks);
+
+        if (keys.length === 0) {
+            showStatus('No bookmarks to export yet.');
+            return;
+        }
+
+        const payload = {
+            app: 'Dharmic Text Reader',
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            count: keys.length,
+            bookmarks: bookmarks
+        };
+
+        try {
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const stamp = new Date().toISOString().slice(0, 10);
+            link.href = url;
+            link.download = `dharmic-reader-bookmarks-${stamp}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            showStatus(`Exported ${keys.length} bookmark(s) to file.`);
+        } catch (err) {
+            console.error('Bookmark export failed:', err);
+            showStatus('Failed to export bookmarks on this device.');
+        }
+    }
+
+    function importBookmarks(file) {
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            try {
+                const parsed = JSON.parse(event.target.result);
+                const incoming = (parsed && typeof parsed === 'object' && parsed.bookmarks && typeof parsed.bookmarks === 'object')
+                    ? parsed.bookmarks
+                    : (parsed && typeof parsed === 'object' ? parsed : null);
+
+                if (!incoming) {
+                    showStatus(`Failed to import ${file.name}: no bookmarks found in the file.`);
+                    return;
+                }
+
+                const existing = getStoredBookmarks();
+                let added = 0;
+                let skipped = 0;
+
+                Object.keys(incoming).forEach(key => {
+                    if (existing[key]) {
+                        skipped++;
+                    } else {
+                        existing[key] = incoming[key];
+                        added++;
+                    }
+                });
+
+                saveStoredBookmarks(existing);
+
+                const message = `Imported ${added} bookmark(s)` + (skipped ? `, skipped ${skipped} already saved` : '') + '.';
+                showStatus(message);
+
+                if (isShowingBookmarksOnly) {
+                    renderBookmarks();
+                } else {
+                    applyFilterAndRender();
+                }
+            } catch (err) {
+                console.error('Bookmark import failed:', err);
+                showStatus(`Failed to import ${file.name}: invalid JSON format.`);
+            }
+        };
+
+        reader.onerror = function () {
+            showStatus(`Failed to read ${file.name}. Please try again.`);
+        };
+
+        reader.readAsText(file);
+    }
+
+    /* ---------------------------------------------------------------
+     * Offline translation cache
+     * --------------------------------------------------------------- */
+
+    function getTranslationCache() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.translations) || '{}');
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function makeTranslationCacheKey(fileName, verseIndex, langCode) {
+        return `${fileName}_${verseIndex}_${langCode}`;
+    }
+
+    function verseIndexForDisplay(displayIndex) {
+        return (currentPage - 1) * itemsPerPage + displayIndex;
+    }
+
+    function saveTranslationToCache(key, text) {
+        try {
+            const cache = getTranslationCache();
+            cache[key] = text;
+
+            const keys = Object.keys(cache);
+            if (keys.length > TRANSLATION_CACHE_LIMIT) {
+                keys.slice(0, keys.length - TRANSLATION_CACHE_LIMIT).forEach(stale => {
+                    delete cache[stale];
+                });
+            }
+
+            localStorage.setItem(STORAGE_KEYS.translations, JSON.stringify(cache));
+        } catch (err) {
+            console.warn('Could not cache translation:', err);
+        }
+    }
+
+    function clearTranslationCache() {
+        try {
+            localStorage.removeItem(STORAGE_KEYS.translations);
+        } catch (e) {
+            /* Nothing to clear when storage is unavailable. */
+        }
+    }
+
+    function getCachedTranslation(displayIndex, langCode, verseIndex) {
+        const index = (verseIndex === undefined) ? verseIndexForDisplay(displayIndex) : verseIndex;
+        const cache = getTranslationCache();
+        return cache[makeTranslationCacheKey(currentFileName, index, langCode)] || '';
+    }
+
+    function renderTranslatedText(targetDiv, translatedText, targetLangCode) {
+        targetDiv.textContent = translatedText;
+        const speechLang = targetLangCode === 'en' ? 'en-US' : 'kn-IN';
+        targetDiv.setAttribute('data-lang', speechLang);
+    }
+
+    function showCachedTranslation(displayIndex, targetLangCode, verseIndex) {
+        const cached = getCachedTranslation(displayIndex, targetLangCode, verseIndex);
+        if (!cached) return false;
+
+        const targetDiv = document.getElementById(`trans_text_${displayIndex}`);
+        if (!targetDiv) return false;
+
+        renderTranslatedText(targetDiv, cached, targetLangCode);
+        return true;
+    }
+
+    /* ---------------------------------------------------------------
+     * Audio
+     * --------------------------------------------------------------- */
+
+    function playAudio(text, lang = 'hi-IN') {
+        if (!text || text.trim() === '' || text === '—') {
+            showStatus('There is no text available to read aloud for this verse.');
+            return;
+        }
+
+        if (window.AndroidTTS && typeof window.AndroidTTS.speak === 'function') {
+            window.AndroidTTS.speak(text, lang);
+        } else if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = (lang.startsWith('hi') || lang.startsWith('sa') || lang.startsWith('kn')) ? 0.85 : 0.95;
+            const voices = window.speechSynthesis.getVoices();
+            const matchingVoice = voices.find(v => v.lang === lang || v.lang.startsWith(lang.split('-')[0]));
+            if (matchingVoice) {
+                utterance.voice = matchingVoice;
+            }
+            window.speechSynthesis.speak(utterance);
+        } else {
+            showStatus('Speech synthesis is not supported on this browser or device.');
+        }
+    }
+
+    function stopAudio() {
+        if (window.AndroidTTS && typeof window.AndroidTTS.stop === 'function') {
+            window.AndroidTTS.stop();
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    /* ---------------------------------------------------------------
+     * Translation
+     * --------------------------------------------------------------- */
+
+    async function requestTranslation(text, targetLangCode) {
+        if (!text || text.length < 800) {
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLangCode}&dt=t&q=` + encodeURIComponent(text);
+            const res = await fetch(url);
+            const data = await res.json();
+            return data[0].map(item => item[0]).join('');
+        }
+
+        const rawSentences = text.split(/[।.\n]+/);
+        let translatedParts = [];
+        let currentChunk = "";
+
+        for (let sentence of rawSentences) {
+            if (!sentence.trim()) continue;
+
+            if ((currentChunk + sentence).length > 700) {
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLangCode}&dt=t&q=` + encodeURIComponent(currentChunk);
+                const res = await fetch(url);
+                const data = await res.json();
+                translatedParts.push(data[0].map(item => item[0]).join(''));
+
+                currentChunk = sentence + " ";
+                await new Promise(r => setTimeout(r, 300));
+            } else {
+                currentChunk += sentence + " ";
+            }
+        }
+
+        if (currentChunk.trim()) {
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLangCode}&dt=t&q=` + encodeURIComponent(currentChunk);
+            const res = await fetch(url);
+            const data = await res.json();
+            translatedParts.push(data[0].map(item => item[0]).join(''));
+        }
+
+        return translatedParts.join(' ');
+    }
+
+    async function translateVerse(displayIndex, text, targetLangCode, verseIndex) {
+        const targetDiv = document.getElementById(`trans_text_${displayIndex}`);
+        if (!targetDiv) return;
+
+        const btnEn = document.getElementById(`btn_trans_en_${displayIndex}`);
+        const btnKn = document.getElementById(`btn_trans_kn_${displayIndex}`);
+        const index = (verseIndex === undefined) ? verseIndexForDisplay(displayIndex) : verseIndex;
+
+        if (showCachedTranslation(displayIndex, targetLangCode, index)) {
+            return;
+        }
+
+        const langName = targetLangCode === 'en' ? 'English' : 'Kannada';
+        targetDiv.innerHTML = `<em>Translating to ${langName}...</em>`;
+
+        if (btnEn) btnEn.disabled = true;
+        if (btnKn) btnKn.disabled = true;
+
+        try {
+            const translatedText = await requestTranslation(text, targetLangCode);
+            renderTranslatedText(targetDiv, translatedText, targetLangCode);
+            saveTranslationToCache(makeTranslationCacheKey(currentFileName, index, targetLangCode), translatedText);
+        } catch (err) {
+            console.error("Translation error details:", err);
+            targetDiv.innerHTML = '<span class="inline-error">Translation failed. Please check your internet connection.</span>';
+            showStatus('Translation failed — check your internet connection and try again.');
+        } finally {
+            if (btnEn) btnEn.disabled = false;
+            if (btnKn) btnKn.disabled = false;
+        }
+    }
+
+    /* ---------------------------------------------------------------
+     * Loaded file management
+     * --------------------------------------------------------------- */
+
+    function hasFileOption(fileName) {
+        const select = document.getElementById('loadedFilesSelect');
+        for (const option of select.options) {
+            if (option.value === fileName) return true;
+        }
+        return false;
+    }
+
+    function addLoadedFileOption(fileName) {
+        if (hasFileOption(fileName)) return;
+
+        const select = document.getElementById('loadedFilesSelect');
+        const option = document.createElement('option');
+        option.value = fileName;
+        option.textContent = fileName;
+        select.appendChild(option);
+    }
+
+    function refreshLoadedFilesUI() {
+        const names = Object.keys(loadedFiles);
+        const select = document.getElementById('loadedFilesSelect');
+        const loadFirstBtn = document.getElementById('loadFirstFileBtn');
+
+        select.style.display = names.length ? 'inline-block' : 'none';
+        loadFirstBtn.style.display = names.length ? 'inline-block' : 'none';
+
+        loadFirstBtn.onclick = function () {
+            const firstFile = Object.keys(loadedFiles)[0];
+            select.value = firstFile;
+            select.dispatchEvent(new Event('change'));
+        };
+
+        if (select.value && !loadedFiles[select.value]) {
+            select.value = '';
+        }
+    }
+
+    function saveLastOpenedFile(fileName) {
+        try {
+            localStorage.setItem(STORAGE_KEYS.lastFile, fileName || '');
+        } catch (e) {
+            /* Storage may be unavailable - persistence is best effort. */
+        }
+    }
+
+    function getLastOpenedFile() {
+        try {
+            return localStorage.getItem(STORAGE_KEYS.lastFile) || '';
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function selectLoadedFile(fileName) {
+        const select = document.getElementById('loadedFilesSelect');
+        if (!loadedFiles[fileName]) return false;
+        select.value = fileName;
+        select.dispatchEvent(new Event('change'));
+        return true;
+    }
+
+    async function loadSampleDataset() {
+        showStatus('Loading bundled sample (Bhagavad Gita, Chapter 1)…', 0);
+
+        try {
+            const res = await fetch(SAMPLE_FILE_PATH);
+            if (!res.ok) {
+                throw new Error('HTTP ' + res.status);
+            }
+
+            const data = await res.json();
+            const sample = Array.isArray(data.BhagavadGitaChapter) ? data.BhagavadGitaChapter : data;
+
+            loadedFiles[SAMPLE_FILE_NAME] = data;
+            addLoadedFileOption(SAMPLE_FILE_NAME);
+            refreshLoadedFilesUI();
+            selectLoadedFile(SAMPLE_FILE_NAME);
+
+            showStatus(`Sample dataset ready: Bhagavad Gita, Chapter 1 (${sample.length} verses).`);
+        } catch (err) {
+            console.error('Sample dataset could not be loaded:', err);
+            showStatus('Could not load the bundled sample. Pick a JSON file, or reinstall the app to restore the sample data.');
+            renderEmptyState();
+        }
+    }
+
+    /* ---------------------------------------------------------------
+     * Rendering
+     * --------------------------------------------------------------- */
+
+    function renderEmptyState() {
+        document.getElementById('displayArea').innerHTML =
+            '<div class="empty-placeholder">' +
+            '<p>No dataset loaded. Click the file picker above to pick a chapter file.</p>' +
+            '<button class="btn" id="loadSampleBtn" onclick="loadSampleDataset()">📖 Load Sample (Bhagavad Gita, Ch. 1)</button>' +
+            '</div>';
+    }
+
+    function extractFields(item, globalIndex) {
+        let verseTag = `Verse ${globalIndex + 1}`;
+        let metaInfo = '';
+        let originalText = '';
+        let translationText = '';
+        let extraFields = {};
+
+        if (typeof item !== 'object' || item === null) {
+            return { verseTag, metaInfo, originalText: String(item), translationText: '', extraFields: {} };
+        }
+
+        if (item.chapter !== undefined && item.verse !== undefined) {
+            verseTag = `Chapter ${item.chapter}, Verse ${item.verse}`;
+        } else if (item.id) {
+            verseTag = `${item.id}`;
+        } else if (item.shloka !== undefined) {
+            verseTag = `Shloka ${item.shloka}`;
+        } else if (item.type) {
+            verseTag = `Verse ${globalIndex + 1} (${item.type})`;
+        }
+
+        if (item.text !== undefined) {
+            originalText = String(item.text);
+        } else if (item.content !== undefined) {
+            originalText = String(item.content);
+        } else if (item.sanskrit !== undefined) {
+            originalText = String(item.sanskrit);
+        }
+
+        if (item.commentaries && typeof item.commentaries === 'object') {
+            let commentaryLines = [];
+            for (const [author, text] of Object.entries(item.commentaries)) {
+                commentaryLines.push(`[${author}]:\n${text}`);
+            }
+            translationText = commentaryLines.join('\n\n');
+        } else {
+            const translationKeys = ['translation', 'english', 'meaning', 'translation_english', 'english_meaning', 'hindi', 'purport'];
+            for (const tKey of translationKeys) {
+                if (item[tKey] !== undefined) {
+                    translationText = String(item[tKey]);
+                    break;
+                }
+            }
+        }
+
+        const handledKeys = ['chapter', 'verse', 'text', 'commentaries', 'id', 'part', 'book', 'section', 'hymn', 'deity', 'content', 'type', 'kaand', 'sanskrit', 'shloka_number', 'sloka_number', ...Object.keys(item.commentaries || {})];
+
+        for (const [k, v] of Object.entries(item)) {
+            if (handledKeys.includes(k.toLowerCase())) continue;
+            extraFields[k] = typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v);
+        }
+
+        return { verseTag, metaInfo, originalText, translationText, extraFields };
+    }
+
+    function applyFilterAndRender() {
+        if (!currentData) {
+            currentItems = [];
+            renderEmptyState();
+            document.getElementById('paginationControls').style.display = 'none';
+            setStatusBase(DEFAULT_STATUS);
+            return;
+        }
+
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+        let items = [];
+        if (Array.isArray(currentData)) {
+            items = currentData;
+        } else if (typeof currentData === 'object') {
+            items = Object.entries(currentData).map(([k, v]) => {
+                return (typeof v === 'object' && v !== null) ? { verse_number: k, ...v } : { verse_number: k, text: v };
+            });
+        } else {
+            items = [{ text: String(currentData) }];
+        }
+
+        if (query) {
+            items = items.filter(item => {
+                const str = typeof item === 'object' ? JSON.stringify(item) : String(item);
+                return str.toLowerCase().includes(query);
+            });
+        }
+
+        currentItems = items;
+
+        if (!query) {
+            currentPage = 1;
+            renderPaginated(items, '');
+        } else {
+            currentPage = 1;
+            renderCards(items, ' (Search Filtered)');
+        }
+    }
+
+    function changePage(delta) {
+        const totalPages = Math.max(1, Math.ceil(currentItems.length / itemsPerPage));
+        const target = currentPage + delta;
+        if (target < 1 || target > totalPages) return;
+
+        /* Render directly: applyFilterAndRender() resets currentPage back to 1. */
+        currentPage = target;
+        renderPaginated(currentItems, isShowingBookmarksOnly ? ' (Bookmarked Verses)' : '');
+    }
+
+    function jumpToVerse() {
+        const input = document.getElementById('jumpToInput');
+        const total = currentItems.length;
+        const requested = parseInt(input.value, 10);
+
+        if (!total) {
+            showStatus('Load a dataset before jumping to a verse.');
+            return;
+        }
+
+        if (!requested || requested < 1) {
+            showStatus(`Enter a verse number between 1 and ${total}.`, 3000);
+            return;
+        }
+
+        const verse = Math.min(requested, total);
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
+
+        if (!query) {
+            currentPage = Math.min(Math.ceil(verse / itemsPerPage), totalPages);
+            renderPaginated(currentItems, '');
+        } else {
+            currentPage = 1;
+            renderCards(currentItems, ' (Search Filtered)');
+        }
+
+        input.value = '';
+
+        if (requested > total) {
+            showStatus(`Only ${total} verse(s) in the current view — jumped to verse ${verse}.`, 3000);
+        } else {
+            showStatus(`Jumped to verse ${verse} of ${total}.`, 2000);
+        }
+
+        const target = document.querySelector(`[data-verse-index="${verse}"]`);
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function renderPaginated(items, modeLabel = '') {
+        const display = document.getElementById('displayArea');
+        const paginationControls = document.getElementById('paginationControls');
+        display.innerHTML = '';
+
+        const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+        if (currentPage < 1) currentPage = 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const itemsToRender = items.slice(startIndex, endIndex);
+        const rangeStart = items.length ? startIndex + 1 : 0;
+        const rangeEnd = Math.min(endIndex, items.length);
+
+        setStatusBase(`Displaying ${rangeStart}–${rangeEnd} of ${items.length} verse(s)${modeLabel}`);
+
+        if (items.length === 0) {
+            display.innerHTML = '<div class="empty-placeholder">No verses match your current selection or bookmarks.</div>';
+            paginationControls.style.display = 'none';
+            return;
+        }
+
+        paginationControls.style.display = 'flex';
+        document.getElementById('paginationInfo').textContent = `Verses ${rangeStart}–${rangeEnd} of ${items.length}`;
+        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById('prevPageBtn').disabled = currentPage === 1;
+        document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
+        document.getElementById('jumpToInput').max = items.length;
+
+        renderCardsInternal(itemsToRender, modeLabel);
+    }
+
+    function renderCards(itemsToRender, modeLabel = '') {
+        const display = document.getElementById('displayArea');
+        const paginationControls = document.getElementById('paginationControls');
+        display.innerHTML = '';
+
+        setStatusBase(`Displaying ${itemsToRender.length} verse(s)${modeLabel}`);
+        paginationControls.style.display = 'none';
+
+        if (itemsToRender.length === 0) {
+            display.innerHTML = '<div class="empty-placeholder">No verses match your current selection or bookmarks.</div>';
+            return;
+        }
+
+        renderCardsInternal(itemsToRender, modeLabel);
+    }
+
+    function renderBookmarks() {
+        const bookmarks = getStoredBookmarks();
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        let items = Object.values(bookmarks);
+
+        if (query) {
+            items = items.filter(item => {
+                const str = typeof item === 'object' ? JSON.stringify(item) : String(item);
+                return str.toLowerCase().includes(query);
+            });
+        }
+
+        currentItems = items;
+        currentPage = 1;
+        renderCards(items, ' (Bookmarked Verses)');
+    }
+
+    function renderCardsInternal(itemsToRender, modeLabel = '') {
+        const display = document.getElementById('displayArea');
+        const bookmarks = getStoredBookmarks();
+        display.innerHTML = '';
+
+        itemsToRender.forEach((item, displayIndex) => {
+            const globalIndex = (currentPage - 1) * itemsPerPage + displayIndex;
+            const { verseTag, metaInfo, originalText, translationText, extraFields } = extractFields(item, globalIndex);
+            const bookmarkKey = makeBookmarkKey(item._sourceFile || currentFileName, verseTag, globalIndex);
+            const isBookmarked = !!bookmarks[bookmarkKey];
+
+            const packedItem = {
+                ...item,
+                _sourceFile: item._sourceFile || currentFileName
+            };
+
+            const card = document.createElement('div');
+            card.className = 'verse-card';
+            card.setAttribute('data-verse-index', globalIndex + 1);
+
+            let extraHtml = '';
+            const extraKeys = Object.keys(extraFields);
+            if (extraKeys.length > 0) {
+                extraHtml = '<div class="extra-fields">';
+                for (const k of extraKeys) {
+                    if (k === '_sourceFile') continue;
+                    extraHtml += `<div class="extra-field-row"><span class="extra-field-key">${k}:</span> ${extraFields[k]}</div>`;
+                }
+                extraHtml += '</div>';
+            }
+
+            const hasPreloadedTranslation = Boolean(translationText && translationText.trim() !== '');
+
+            card.innerHTML = `
+                <div class="verse-header">
+                    <div class="verse-title-group">
+                        <span class="verse-tag">${verseTag}</span>
+                        <span class="verse-meta">${metaInfo}</span>
+                    </div>
+                    <div class="verse-actions">
+                        <button class="btn-icon ${isBookmarked ? 'bookmarked' : ''}" id="bm_${displayIndex}">
+                            ${isBookmarked ? '★ Bookmarked' : '☆ Bookmark'}
+                        </button>
+                    </div>
+                </div>
+                <div class="columns-container">
+                    <div class="column-box">
+                        <div class="column-header">
+                            <div class="column-label">मूल पाठ / Original Text (Devanagari)</div>
+                            <button class="btn-icon" id="play_orig_${displayIndex}" title="Listen in Sanskrit/Hindi">🔊 Listen (Orig)</button>
+                        </div>
+                        <div class="sanskrit-text" id="orig_text_${displayIndex}">${originalText || '—'}</div>
+                    </div>
+                    <div class="column-box">
+                        <div class="column-header">
+                            <div class="column-label">Translation / Commentary</div>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn-icon btn-translate" id="btn_trans_en_${displayIndex}" title="Translate to English">🌐 EN</button>
+                                <button class="btn-icon btn-translate" id="btn_trans_kn_${displayIndex}" title="Translate to Kannada">🌐 ಕನ್ನಡ</button>
+                                <button class="btn-icon" id="play_trans_${displayIndex}" title="Listen to Translation">🔊 Listen</button>
+                            </div>
+                        </div>
+                        <div class="translation-text" id="trans_text_${displayIndex}" data-lang="en-US">
+                            ${hasPreloadedTranslation ? translationText : 'No preloaded translation. Click EN or ಕನ್ನಡ above to translate.'}
+                        </div>
+                    </div>
+                </div>
+                ${extraHtml}
+            `;
+
+            display.appendChild(card);
+
+            document.getElementById(`bm_${displayIndex}`).addEventListener('click', () => {
+                toggleBookmark(bookmarkKey, packedItem);
+            });
+
+            document.getElementById(`play_orig_${displayIndex}`).addEventListener('click', () => {
+                playAudio(originalText, 'hi-IN');
+            });
+
+            document.getElementById(`play_trans_${displayIndex}`).addEventListener('click', () => {
+                const transDiv = document.getElementById(`trans_text_${displayIndex}`);
+                const currentTranslationContent = transDiv.innerText;
+                const currentLang = transDiv.getAttribute('data-lang') || 'en-US';
+                playAudio(currentTranslationContent, currentLang);
+            });
+
+            document.getElementById(`btn_trans_en_${displayIndex}`).addEventListener('click', () => {
+                const textToTranslate = originalText && originalText !== '—' ? originalText : String(item);
+                if (showCachedTranslation(displayIndex, 'en', globalIndex)) return;
+                translateVerse(displayIndex, textToTranslate, 'en', globalIndex);
+            });
+
+            document.getElementById(`btn_trans_kn_${displayIndex}`).addEventListener('click', () => {
+                const textToTranslate = originalText && originalText !== '—' ? originalText : String(item);
+                if (showCachedTranslation(displayIndex, 'kn', globalIndex)) return;
+                translateVerse(displayIndex, textToTranslate, 'kn', globalIndex);
+            });
+        });
+    }
+
+    /* ---------------------------------------------------------------
+     * Event wiring
+     * --------------------------------------------------------------- */
+
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const parsed = JSON.parse(event.target.result);
+                    loadedFiles[file.name] = parsed;
+
+                    addLoadedFileOption(file.name);
+                    refreshLoadedFilesUI();
+
+                    if (!userFileLoaded) {
+                        userFileLoaded = true;
+                        selectLoadedFile(file.name);
+                    }
+
+                    saveLastOpenedFile(currentFileName);
+                    showStatus(`Loaded ${Object.keys(loadedFiles).length} file(s). Select one from the dropdown to view.`);
+                } catch (err) {
+                    console.error('Error parsing JSON:', err);
+                    showStatus(`Failed to parse ${file.name}: invalid JSON format (${err.message}).`);
+                }
+            };
+            reader.onerror = function(err) {
+                console.error('FileReader error:', err);
+                showStatus(`Failed to read ${file.name}. Please try again.`);
+            };
+            reader.readAsText(file);
+        });
+    });
+
+    document.getElementById('loadedFilesSelect').addEventListener('change', function(e) {
+        const selectedFile = e.target.value;
+        if (!selectedFile || !loadedFiles[selectedFile]) {
+            console.error('Selected file not found in loaded files');
+            return;
+        }
+
+        const previousFile = currentFileName;
+        currentFileName = selectedFile;
+        saveLastOpenedFile(currentFileName);
+
+        if (previousFile !== currentFileName) {
+            clearTranslationCache();
+        }
+
+        document.getElementById('fileBadge').textContent = `Viewing: ${currentFileName}`;
+        isShowingBookmarksOnly = false;
+        document.getElementById('bookmarkFilterBtn').classList.remove('active');
+
+        const parsed = loadedFiles[selectedFile];
+
+        if (parsed && typeof parsed === 'object' && Array.isArray(parsed.BhagavadGitaChapter)) {
+            currentData = parsed.BhagavadGitaChapter;
+        }
+        else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.verses)) {
+            currentData = parsed.verses;
+        }
+        else {
+            currentData = parsed;
+        }
+
+        document.getElementById('searchInput').disabled = false;
+        document.getElementById('searchInput').value = '';
+        document.getElementById('jumpToInput').value = '';
+        currentPage = 1;
+        applyFilterAndRender();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+        if (isShowingBookmarksOnly) {
+            renderBookmarks();
+        } else {
+            applyFilterAndRender();
+        }
+    });
+
+    document.getElementById('bookmarkFilterBtn').addEventListener('click', function() {
+        isShowingBookmarksOnly = !isShowingBookmarksOnly;
+        this.classList.toggle('active', isShowingBookmarksOnly);
+
+        if (isShowingBookmarksOnly) {
+            renderBookmarks();
+        } else {
+            applyFilterAndRender();
+        }
+    });
+
+    document.getElementById('exportBookmarksBtn').addEventListener('click', exportBookmarks);
+
+    document.getElementById('importBookmarksBtn').addEventListener('click', function() {
+        document.getElementById('bookmarkImportInput').click();
+    });
+
+    document.getElementById('bookmarkImportInput').addEventListener('change', function(e) {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+            importBookmarks(file);
+        }
+        e.target.value = '';
+    });
+
+    document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+    ['Small', 'Medium', 'Large'].forEach(name => {
+        const btn = document.getElementById('fontSize' + name + 'Btn');
+        btn.addEventListener('click', function() {
+            setFontSize(this.dataset.size, true);
+        });
+    });
+
+    document.getElementById('jumpToInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            jumpToVerse();
+        }
+    });
+
+    /* ---------------------------------------------------------------
+     * Startup
+     * --------------------------------------------------------------- */
+
+    window.addEventListener('load', () => {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
+        applyTheme(getStoredTheme() || 'light');
+        applyFontSize(getStoredFontSize() || 'medium');
+        updateBookmarkCountDisplay();
+
+        const lastFile = getLastOpenedFile();
+        const names = Object.keys(loadedFiles);
+
+        if (names.length > 0 && selectLoadedFile((lastFile && loadedFiles[lastFile]) ? lastFile : names[0])) {
+            showStatus(`Reopened ${lastFile || names[0]}.`);
+        } else {
+            loadSampleDataset();
+        }
+
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+            window.Capacitor.Plugins.App.addListener('backButton', () => {
+                if (confirm('Do you want to exit Dharmic Reader?')) {
+                    window.Capacitor.Plugins.App.exitApp();
+                }
+            });
+        }
+    });
+
+    /* iOS SPLASH SCREEN:
+     * The Android splash drawable lives in android/app/src/main/res/drawable/splash.xml
+     * (declared by capacitor.config.json -> SplashScreen.androidSplashResourceName).
+     * iOS splash screens cannot be generated from HTML/CSS: they require
+     * ios/App/App/Assets.xcassets/Splash.imageset launch images, which must be
+     * regenerated on macOS with `npx @capacitor/assets generate --ios` and then
+     * verified/released from Xcode (see ios/App/App/Assets.xcassets).
+     */
+</script>
+
+<script>
+  // PWA service worker registration
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .then(reg => console.log("Dharmic Reader PWA service worker registered:", reg.scope))
+        .catch(err => console.warn("Dharmic Reader PWA service worker registration failed:", err));
+    });
+  }
+</script>
+</body>
+</html>
