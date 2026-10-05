@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dharmic-reader-v3';
+const CACHE_NAME = 'dharmic-reader-v3-5-final';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const APP_SHELL = [
   './icons/icon-512.png'
 ];
 
+// v3.5 English TTS + Exit build
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
